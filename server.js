@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { response } from 'express'
 // la no packge.json tem que informar no type o module devido a forma nova
 // a forma antiga era const express = require('express')
 import { PrismaClient } from '@prisma/client'
@@ -10,8 +10,6 @@ const app = express()
 
 // informa ao express que vamos usar json nas requisições
 app.use(express.json())
-
-const users = []
 
 app.post('/users', async (request, response) => {
 
@@ -32,11 +30,37 @@ app.post('/users', async (request, response) => {
 
 })
 
-app.get('/users', (request,response) => {
+app.get('/users', async (request,response) => {
+
+    // o await é um sinal para esperar uam requisição que vai ser buscada e avisar ao js que espere
+    // o prisma vai pegar no banco de dados os users e o find many vai buscar esses users cadastrados
+    const users = await prisma.user.findMany()
 
     response.status(200).json(users)
 
 })
+
+app.put('/users/:id', async (request, response) => {
+
+    await prisma.user.update({
+        where: {
+            id: request.params.id
+        },
+        data: {
+            email: request.body.email,
+            name: request.body.name,
+            age: request.body.age
+        }
+
+
+    })
+
+    response.status(201).json(request.body)
+
+
+})
+
+
 
 app.listen(3000)
 
