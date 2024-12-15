@@ -1,6 +1,9 @@
 import express from 'express'
 // la no packge.json tem que informar no type o module devido a forma nova
 // a forma antiga era const express = require('express')
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 const app = express()
 
@@ -10,13 +13,19 @@ app.use(express.json())
 
 const users = []
 
-app.post('/users', (request, response) => {
+app.post('/users', async (request, response) => {
 
     //const {name,age,email } = request.body
 
     //const userNovo = {name,age,email}
 
-    users.push(request.body)
+    await prisma.user.create({
+        data: {
+            email: request.body.email,
+            name: request.body.name,
+            age: request.body.age
+        }
+    })
 
     response.status(201).json(request.body)
 
