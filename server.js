@@ -4,27 +4,28 @@ import express from 'express'
 
 const app = express()
 
+
+// informa ao express que vamos usar json nas requisições
 app.use(express.json())
 
-const user = []
+const users = []
 
 app.post('/users', (request, response) => {
 
-    const {name,age,email } = request.body
+    //const {name,age,email } = request.body
 
-    const userNovo = {name,age,email}
+    //const userNovo = {name,age,email}
 
-    user.push(userNovo)
+    users.push(request.body)
 
-    response.send('ok post deu certo')
-
+    response.status(201).json(request.body)
 
 
 })
 
 app.get('/users', (request,response) => {
 
-    response.send(user)
+    response.status(200).json(users)
 
 })
 
