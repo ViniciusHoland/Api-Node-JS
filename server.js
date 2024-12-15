@@ -34,7 +34,18 @@ app.get('/users', async (request,response) => {
 
     // o await é um sinal para esperar uam requisição que vai ser buscada e avisar ao js que espere
     // o prisma vai pegar no banco de dados os users e o find many vai buscar esses users cadastrados
-    const users = await prisma.user.findMany()
+    
+    let users = []
+    if(request.query ) {
+        users  = await prisma.user.findMany({
+            where: {
+                name: request.query.name,
+                age: request.query.age
+            }
+        })
+    } else {
+        users = await prisma.user.findMany()
+    }
 
     response.status(200).json(users)
 
@@ -60,7 +71,17 @@ app.put('/users/:id', async (request, response) => {
 
 })
 
+app.delete('/users/:id', async (request, response) => {
 
+    await prisma.user.delete({
+        where: {
+            id: request.params.id,
+        },
+    })
+
+    response.status(200).json({message : 'Usuario deletado com sucesso'})
+
+})
 
 app.listen(3000)
 
